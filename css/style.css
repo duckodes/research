@@ -1,0 +1,11 @@
+body {
+    background-color: #353535;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    font-size: 30px;
+    font-family: 'ZenMaruGothic-Light';
+    width: 100dvw;
+    height: 100dvh;
+    margin: 0;
+}
