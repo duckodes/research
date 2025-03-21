@@ -13,7 +13,6 @@ const post = (title, content) => {
 
     set(dataRef, content);
 }
-post('Unity 插件畫圖工具', '以unity為基底的插件工具');
 const autoUpdateData = async () => {
     document.body.innerHTML += render().cardContainer();
     const dataRef = ref(database, 'research/post');
