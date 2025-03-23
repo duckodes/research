@@ -9,7 +9,6 @@ body {
 }
 
 .add-card {
-    appearance: none;
     width: 35px;
     height: 35px;
     display: flex;
@@ -22,6 +21,9 @@ body {
     font-size: 20px;
     position: fixed;
     bottom: 10px;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
 }
 
 .add-card:active {
@@ -63,6 +65,23 @@ body {
 
 .authentication {
     position: fixed;
-    top: 50px;
-    height: 5px;
+    background: #353535;
+    width: 100dvw;
+    height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.authentication>*{
+    width: 100%;
+    max-width: 200px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
 }

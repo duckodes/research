@@ -5,7 +5,7 @@ import fetcher from "./fetcher.js";
 const firebaseConfig = await fetcher.load('../config/firebaseConfig.json');
 const app = initializeApp(firebaseConfig);
 const database = getDatabase();
-document.body.innerHTML = `<button class="add-card">+</button>`;
+document.body.innerHTML = '';
 
 const post = (title, content) => {
     const dataHash = dateutils.ToHash();
@@ -14,7 +14,7 @@ const post = (title, content) => {
     set(dataRef, content);
 }
 const autoUpdateData = async () => {
-    document.body.innerHTML += render().cardContainer();
+    document.body.innerHTML += render.cardContainer.html();
     const dataRef = ref(database, 'research/post');
     const getFrontSection = (hash) => {
         const index = hash.indexOf("?id=");
@@ -34,31 +34,38 @@ const autoUpdateData = async () => {
                 const keys = dataKeys[i].split('?id=')[1];
                 const name = getFrontSection(dataKeys[i]);
                 const content = dataVals[i];
-                cardContainer.innerHTML += render().card(name, content);
+                cardContainer.innerHTML += render.card.html(name, content);
             }
         } else {
-            document.querySelector('.card-container').innerHTML = render().emptyContent();
+            document.querySelector('.card-container').innerHTML = render.emptyContent.html();
         }
     });
-    document.querySelector('.add-card').addEventListener('click', () => {
-        document.body.innerHTML += render().authentication();
-    });
 }
-const render = () => {
-    return {
-        emptyContent: () => {
+const render = {
+    emptyContent: {
+        html: () => {
             return `
                 <div class="empty">
                     none research
                 </div>
-            `;
+            `
         },
-        cardContainer: () => {
+        dom: () => {
+            return document.querySelector('.empty')
+        }
+    },
+    cardContainer: {
+        html: () => {
             return `
                 <div class="card-container"></div>
-            `;
+            `
         },
-        card: (title, content) => {
+        dom: () => {
+            return document.querySelector('.card-container')
+        }
+    },
+    card: {
+        html: (title, content) => {
             return `
                 <div class="card">
                     <div class="title">${title}</div>
@@ -66,14 +73,41 @@ const render = () => {
                 </div>
             `;
         },
-        authentication: () => {
+        dom: () => {
+            return document.querySelector('.card');
+        }
+    },
+    addCard: {
+        html: () => {
             return `
-                <div class="authentication">
-                    <input type="text" class="account" minlength="4" maxlength="8" size="10" />
-                    <input type="password" class="password" minlength="4" maxlength="8" size="10" />
+                <div class="add-card">
+                    +
                 </div>
             `;
+        },
+        dom: () => {
+            return document.querySelector('.add-card');
+        }
+    },
+    authentication: {
+        html: () => {
+            return `
+                <div class="authentication">
+                    <input type="text" class="account" size="10" placeholder="username.." />
+                    <input type="password" class="password" size="10" placeholder="password.." />
+                    <div class="login">Login</div>
+                </div>
+            `;
+        },
+        dom: () => {
+            return document.querySelector('.authentication');
         }
     }
 }
-await autoUpdateData();
+const main = (async () => {
+    await autoUpdateData();
+    document.body.innerHTML += render.addCard.html();
+    render.addCard.dom().addEventListener('click', () => {
+        document.body.innerHTML += render.authentication.html();
+    });
+})();
