@@ -14,7 +14,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #505050;
+    box-shadow: 1px 1px 10px #252525;
     border-radius: 100%;
     border: none;
     color: #ffffff50;
@@ -27,7 +27,7 @@ body {
 }
 
 .add-card:active {
-    box-shadow: inset 1px 1px 10px #252525, 1px 1px 10px #252525;
+    box-shadow: inset 1px 1px 5px #252525;
 }
 
 .card-container {
@@ -170,7 +170,7 @@ body {
     background: #303030;
 }
 
-.admin>.logout {
+.admin>* {
     box-shadow: 1px 1px 3px #202020;
     user-select: none;
     -moz-user-select: none;
@@ -181,6 +181,6 @@ body {
     padding: 5px;
 }
 
-.admin>.logout:active {
+.admin>*:active {
     box-shadow: inset 2px 2px 5px #202020;
 }

@@ -56,9 +56,7 @@ const post = (uid = null, title, content, img, detail) => {
 // 'https://cdn.discordapp.com/attachments/1298197587584880674/1353299304386793482/color_all.png?ex=67e31ff1&is=67e1ce71&hm=ab9b157472f48981b323a99a2af1c3c7d86060fe60232275393131afcdf211cc&',
 // 'ColorPanel插件開發<br>目的: Unity編輯器畫圖。<br>動機: 想畫個小UI物件，打開Photoshop卻很卡，因此就想直接用Unity引擎做出可以畫圖的小工具。');
 const autoUpdateData = async () => {
-    if (!render.cardContainer.dom()) {
-        document.body.innerHTML += render.cardContainer.html();
-    }
+    document.body.insertAdjacentHTML('beforeend', render.cardContainer.html());
     const dataRef = ref(database, 'research/post');
     onValue(dataRef, (snapshot) => {
         render.cardContainer.dom().innerHTML = '';
@@ -74,7 +72,7 @@ const autoUpdateData = async () => {
             const content = dataVals[i].content;
             const img = dataVals[i].img;
             const detail = dataVals[i].detail;
-            cardContainer.innerHTML += render.card.html(keys, title, img, content);
+            cardContainer.insertAdjacentHTML('beforeend', render.card.html(keys, title, img, content));
             setTimeout(() => {
                 render.card.dom(keys).card.addEventListener('click', () => {
                     if (render.card.dom(keys).card.getAttribute('contenteditable') === 'true') return;
@@ -84,19 +82,19 @@ const autoUpdateData = async () => {
                         render.card.dom(keys).detail.innerHTML = '';
                     }
                 });
-                // 底層開發
-                if (auth.currentUser !== null && permissions === auth.currentUser.uid) {
-                    render.card.dom(keys).card.innerHTML += render.updatePost.html(keys);
-                    render.updatePost.dom(keys).addEventListener('click', () => {
+                // 編輯
+                if (auth.currentUser !== null && permissions === auth.currentUser.uid && !render.updatePost.dom().domID(keys)) {
+                    render.card.dom(keys).card.insertAdjacentHTML('beforeend', render.updatePost.html(keys));
+                    render.updatePost.dom().domID(keys).addEventListener('click', () => {
                         if (render.card.dom(keys).card.getAttribute('contenteditable') !== 'true') {
-                            render.updatePost.dom(keys).textContent = '確認';
+                            render.updatePost.dom().domID(keys).textContent = '確認';
                             render.card.dom(keys).card.setAttribute('contenteditable', true);
 
                             // 圖片連結可視化編輯
                             render.card.dom(keys).img.style.display = 'none';
                             render.card.dom(keys).imgSrc.innerHTML = `${render.card.dom(keys).img.getAttribute('src')}`;
                         } else {
-                            render.updatePost.dom(keys).textContent = '修改';
+                            render.updatePost.dom().domID(keys).textContent = '修改';
                             render.card.dom(keys).card.setAttribute('contenteditable', false);
 
                             // 更新
@@ -214,6 +212,7 @@ const render = {
                 admin: `
                     <div class="admin">
                         <div class="logout">Logout</div>
+                        <div class="home">\<</div>
                     </div>
                 `,
                 addPost: `
@@ -224,7 +223,8 @@ const render = {
         dom: () => {
             return {
                 admin: document.querySelector('.admin'),
-                logout: document.querySelector('.logout')
+                logout: document.querySelector('.admin>.logout'),
+                home: document.querySelector('.admin>.home')
             }
         }
     },
@@ -234,28 +234,53 @@ const render = {
                 <div class="modify modify-${id}" contenteditable="false">修改</div>
             `;
         },
-        dom: (id) => {
-            return document.querySelector(`.modify-${id}`);
+        dom: () => {
+            return {
+                domID: (id) => {
+                    return document.querySelector(`.modify-${id}`);
+                },
+                dom: document.querySelector('.modify')
+            }
         }
     }
 }
 const main = (async () => {
     onAuthStateChanged(auth, (user) => {
         console.log(user);
-        const handleAddCardEvent = () => {
-            if (!user) {
-                if (!render.authentication.dom().authentication) {
-                    document.body.innerHTML += render.authentication.html();
-                }
+        // 檢查金鑰
+        window.addEventListener('focus', () => {
+            if (!user) return;
+            user.getIdToken().catch((error) => {
+                console.log(error);
+                confirm('登入過期');
+                location.reload();
+            });
+        });
+        const refreshAddCard = () => {
+            render.addCard.dom().remove();
+            document.body.insertAdjacentHTML('beforeend', render.addCard.html());
+        }
+        if (!user) {
+            // 註冊登入按鈕
+            render.addCard.dom().addEventListener('click', () => {
+                // 登入介面
+                document.body.insertAdjacentHTML('beforeend', render.authentication.html());
                 render.authentication.dom().login.addEventListener('click', () => {
-                    login(render.authentication.dom().account.value, render.authentication.dom().password.value, () => {
+                    login(render.authentication.dom().account.value, render.authentication.dom().password.value, async () => {
                         render.authentication.dom().authentication.remove();
-                        document.body.innerHTML += render.admin.html().admin;
+                        document.body.insertAdjacentHTML('beforeend', render.admin.html().admin);
+                        // 登出
                         render.admin.dom().logout.addEventListener('click', () => {
                             logout();
                             render.admin.dom().admin.remove();
+                            refreshAddCard();
+                            render.updatePost.dom().dom?.remove();
+                        });
+                        render.admin.dom().home.addEventListener('click', async () => {
+                            render.admin.dom().admin.remove();
                         });
                     });
+                    refreshAddCard();
                 });
                 render.authentication.dom().account.addEventListener('input', (e) => {
                     const v = e.target.value;
@@ -264,21 +289,26 @@ const main = (async () => {
                         render.authentication.dom().password.focus();
                     }
                 });
-                render.authentication.dom().cancel.addEventListener('click', async () => {
-                    await autoUpdateData();
+                render.authentication.dom().cancel.addEventListener('click', () => {
                     render.authentication.dom().authentication.remove();
-                    render.addCard.dom().addEventListener('click', handleAddCardEvent);
                 });
-            } else {
-                document.body.innerHTML += render.admin.html().admin;
+            });
+        } else {
+            render.addCard.dom().addEventListener('click', () => {
+                document.body.insertAdjacentHTML('beforeend', render.admin.html().admin);
+                // 登出
                 render.admin.dom().logout.addEventListener('click', () => {
                     logout();
                     render.admin.dom().admin.remove();
+                    refreshAddCard();
+                    render.updatePost.dom().dom?.remove();
                 });
-            }
+                render.admin.dom().home.addEventListener('click', async () => {
+                    render.admin.dom().admin.remove();
+                });
+            });
         }
-        render.addCard.dom().addEventListener('click', handleAddCardEvent);
     });
     await autoUpdateData();
-    document.body.innerHTML += render.addCard.html();
+    document.body.insertAdjacentHTML('beforeend', render.addCard.html());
 })();
