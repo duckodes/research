@@ -76,7 +76,7 @@ const autoUpdateData = async () => {
             setTimeout(() => {
                 render.card.dom(keys).card.addEventListener('click', () => {
                     if (render.card.dom(keys).card.getAttribute('contenteditable') === 'true') return;
-                    if (render.card.dom(keys).detail.innerHTML === '') {
+                    if (render.card.dom(keys).detail.textContent === '') {
                         render.card.dom(keys).detail.innerHTML = detail;
                     } else {
                         render.card.dom(keys).detail.innerHTML = '';
@@ -239,7 +239,7 @@ const render = {
                 domID: (id) => {
                     return document.querySelector(`.modify-${id}`);
                 },
-                dom: document.querySelector('.modify')
+                dom: document.querySelectorAll('.modify')
             }
         }
     }
@@ -256,10 +256,6 @@ const main = (async () => {
                 location.reload();
             });
         });
-        const refreshAddCard = () => {
-            render.addCard.dom().remove();
-            document.body.insertAdjacentHTML('beforeend', render.addCard.html());
-        }
         if (!user) {
             // 註冊登入按鈕
             render.addCard.dom().addEventListener('click', () => {
@@ -267,20 +263,8 @@ const main = (async () => {
                 document.body.insertAdjacentHTML('beforeend', render.authentication.html());
                 render.authentication.dom().login.addEventListener('click', () => {
                     login(render.authentication.dom().account.value, render.authentication.dom().password.value, async () => {
-                        render.authentication.dom().authentication.remove();
-                        document.body.insertAdjacentHTML('beforeend', render.admin.html().admin);
-                        // 登出
-                        render.admin.dom().logout.addEventListener('click', () => {
-                            logout();
-                            render.admin.dom().admin.remove();
-                            refreshAddCard();
-                            render.updatePost.dom().dom?.remove();
-                        });
-                        render.admin.dom().home.addEventListener('click', async () => {
-                            render.admin.dom().admin.remove();
-                        });
+                        location.reload();
                     });
-                    refreshAddCard();
                 });
                 render.authentication.dom().account.addEventListener('input', (e) => {
                     const v = e.target.value;
@@ -300,10 +284,13 @@ const main = (async () => {
                 render.admin.dom().logout.addEventListener('click', () => {
                     logout();
                     render.admin.dom().admin.remove();
-                    refreshAddCard();
-                    render.updatePost.dom().dom?.remove();
+                    render.addCard.dom().remove();
+                    document.body.insertAdjacentHTML('beforeend', render.addCard.html());
+                    render.updatePost.dom().dom.forEach(e => {
+                        e.remove();
+                    });
                 });
-                render.admin.dom().home.addEventListener('click', async () => {
+                render.admin.dom().home.addEventListener('click', () => {
                     render.admin.dom().admin.remove();
                 });
             });
