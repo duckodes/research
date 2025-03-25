@@ -130,3 +130,18 @@ body {
     height: 100%;
     background: #303030;
 }
+
+.admin>.logout {
+    box-shadow: 1px 1px 3px #202020;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+}
+
+.admin>.logout:active {
+    box-shadow: inset 2px 2px 5px #202020;
+}
