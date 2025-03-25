@@ -89,6 +89,21 @@ body {
     padding: 5px;
 }
 
+.card-container>.card>.modify {
+    box-shadow: 1px 1px 3px #202020;
+    width: 100px;
+    height: 30px;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: end;
+}
+
+.card-container>.card>.modify:active {
+    box-shadow: inset 2px 2px 5px #202020;
+}
+
 .authentication {
     position: fixed;
     background: #353535;
@@ -113,14 +128,38 @@ body {
     -webkit-user-select: none;
 }
 
-.authentication>.login {
+.authentication>.container>* {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+.authentication>.container {
+    margin: 5px;
+}
+
+.authentication>.container>.login {
     box-shadow: 1px 1px 3px #202020;
     width: 100px;
     height: 30px;
     margin: 5px;
 }
 
-.authentication>.login:active {
+.authentication>.container>.login:active {
+    box-shadow: inset 2px 2px 5px #202020;
+}
+
+.authentication>.container>.cancel {
+    box-shadow: 1px 1px 3px #202020;
+    width: 100px;
+    height: 30px;
+    margin: 5px;
+}
+
+.authentication>.container>.cancel:active {
     box-shadow: inset 2px 2px 5px #202020;
 }
 
