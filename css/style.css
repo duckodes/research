@@ -54,10 +54,6 @@ body {
     border-radius: 5px;
 }
 
-.card-container>.card>* {
-    cursor: pointer;
-}
-
 .card-container>.card>.title {
     box-shadow: inset 2px 2px 10px #303030, inset -2px -2px 10px #303030;
     font-size: 25px;
