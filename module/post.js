@@ -122,6 +122,44 @@ const autoUpdateData = async () => {
                                 selection.addRange(range);
                             }
                         }
+                        if (event.key === 'Backspace' || (event.ctrlKey && (event.key === 'x' || event.key === 'X'))) {
+                            const selection = window.getSelection();
+                            const activeElement = document.activeElement.querySelector('*'); // 獲取當前編輯的元素
+
+                            if (activeElement) {
+                                const isContentEmpty = activeElement.innerHTML.trim() === ''; // 判斷編輯內容是否為空
+
+                                if (isContentEmpty) {
+                                    event.preventDefault(); // 阻止刪除操作
+                                    return; // 不再執行後續邏輯
+                                }
+                            }
+
+                            if (selection.rangeCount > 0) {
+                                const range = selection.getRangeAt(0);
+                                const startContainer = range.startContainer;
+                                const endContainer = range.endContainer;
+
+                                // 檢查是否跨越多個節點
+                                if (startContainer !== endContainer) {
+                                    event.preventDefault(); // 阻止刪除操作
+                                } else {
+                                    // 如果選取範圍內包含 HTML 結構，才阻止刪除
+                                    const parentElement = startContainer.nodeType === Node.TEXT_NODE
+                                        ? startContainer.parentNode
+                                        : startContainer;
+
+                                    if (parentElement && parentElement.nodeType === Node.ELEMENT_NODE) {
+                                        const rangeContents = range.cloneContents();
+                                        const hasHtmlElements = rangeContents.querySelector('*') !== null; // 檢查範圍內是否包含 HTML 元素
+
+                                        if (hasHtmlElements) {
+                                            event.preventDefault(); // 阻止刪除 HTML 結構
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     });
                 }
             });
