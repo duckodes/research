@@ -90,7 +90,12 @@ body {
     padding: 5px;
 }
 
-.card-container>.card>.modify {
+.card-container>.card>.tool {
+    display: flex;
+    justify-content: end;
+}
+
+.card-container>.card>.tool>.modify {
     box-shadow: 1px 1px 3px #202020;
     width: 30px;
     height: 30px;
@@ -98,11 +103,25 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    justify-self: end;
     border-radius: 100%;
 }
 
-.card-container>.card>.modify:active {
+.card-container>.card>.tool>.modify:active {
+    box-shadow: inset 2px 2px 5px #202020;
+}
+
+.card-container>.card>.tool>.delete {
+    box-shadow: 1px 1px 3px #202020;
+    width: 30px;
+    height: 30px;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 100%;
+}
+
+.card-container>.card>.tool>.delete:active {
     box-shadow: inset 2px 2px 5px #202020;
 }
 
@@ -246,7 +265,12 @@ body {
     padding: 5px;
 }
 
-.admin>.my-card>.card>.modify {
+.admin>.my-card>.card>.tool{
+    display: flex;
+    justify-content: end;
+}
+
+.admin>.my-card>.card>.tool>.modify {
     box-shadow: 1px 1px 3px #202020;
     width: 30px;
     height: 30px;
@@ -258,7 +282,23 @@ body {
     border-radius: 100%;
 }
 
-.admin>.my-card>.card>.modify:active {
+.admin>.my-card>.card>.tool>.modify:active {
+    box-shadow: inset 2px 2px 5px #202020;
+}
+
+.admin>.my-card>.card>.tool>.delete {
+    box-shadow: 1px 1px 3px #202020;
+    width: 30px;
+    height: 30px;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: end;
+    border-radius: 100%;
+}
+
+.admin>.my-card>.card>.tool>.delete:active {
     box-shadow: inset 2px 2px 5px #202020;
 }
 

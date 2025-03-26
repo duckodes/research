@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+import { getDatabase, ref, onValue, set, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 import fetcher from "./fetcher.js";
 
@@ -54,7 +54,7 @@ const post = (uid = null, title, content, img, detail) => {
 }
 // post('DPcmhV427VQNJ9ojiOTD2aYyuE83',
 // '插件繪圖工具', 
-// '<div style="color: #f06785;">unity底層開發的插件工具</div>',
+// 'unity底層開發的插件工具',
 // 'https://lib.duckode.com/img/research/color_all.png',
 // 'ColorPanel插件開發<br>目的: Unity編輯器畫圖。<br>動機: 想畫個小UI物件，打開Photoshop卻很卡，因此就想直接用Unity引擎做出可以畫圖的小工具。');
 const autoUpdateData = async () => {
@@ -110,6 +110,10 @@ const autoUpdateData = async () => {
                         }
                         // 內文
                         render.card.dom(keys).detail.innerHTML = detail;
+                    });
+                    // 刪除
+                    render.updatePost.dom().deleteID(keys).addEventListener('click', () => {
+                        remove(ref(database, `research/post/${keys}`));
                     });
                     // 換行更換
                     render.card.dom(keys).card.addEventListener('keydown', (event) => {
@@ -206,6 +210,10 @@ const autoUpdateData = async () => {
                                 }
                                 // 內文
                                 render.admin.dom().card(keys).detail.innerHTML = detail;
+                            });
+                            // 刪除
+                            render.updatePost.dom().myDeleteID(keys).addEventListener('click', () => {
+                                remove(ref(database, `research/post/${keys}`));
                             });
                             // 換行更換
                             render.admin.dom().card(keys).card.addEventListener('keydown', (event) => {
@@ -394,17 +402,26 @@ const render = {
     updatePost: {
         html: (id) => {
             return `
-                <div class="modify modify-${id}" contenteditable="false">✐</div>
+                <div class="tool">
+                    <div class="delete delete-${id}" contenteditable="false">−</div>
+                    <div class="modify modify-${id}" contenteditable="false">✐</div>
+                </div>
             `;
         },
         dom: () => {
             return {
                 domID: (id) => {
-                    return document.querySelector(`.card-${id}>.modify-${id}`);
+                    return document.querySelector(`.card-${id}>.tool>.modify-${id}`);
                 },
-                dom: document.querySelectorAll('.modify'),
+                dom: document.querySelectorAll('.tool'),
                 myDomID: (id) => {
-                    return document.querySelector(`.my-card>.card>.modify-${id}`);
+                    return document.querySelector(`.my-card>.card>.tool>.modify-${id}`);
+                },
+                deleteID: (id) => {
+                    return document.querySelector(`.card-${id}>.tool>.delete-${id}`)
+                },
+                myDeleteID: (id) => {
+                    return document.querySelector(`.my-card>.card-${id}>.tool>.delete-${id}`)
                 }
             }
         }
