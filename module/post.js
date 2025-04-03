@@ -78,12 +78,14 @@ const autoUpdateData = async () => {
             // 所有人
             cardContainer.insertAdjacentHTML('beforeend', render.card.html(keys, title, img, content, time));
             setTimeout(() => {
+                render.card.dom(keys).detail.style.display = 'none';
+                render.card.dom(keys).detail.innerHTML = detail;
                 render.card.dom(keys).card.addEventListener('click', () => {
                     if (render.card.dom(keys).card.getAttribute('contenteditable') === 'true') return;
-                    if (render.card.dom(keys).detail.textContent === '') {
-                        render.card.dom(keys).detail.innerHTML = detail;
+                    if (render.card.dom(keys).detail.style.display === 'none') {
+                        render.card.dom(keys).detail.style.display = '';
                     } else {
-                        render.card.dom(keys).detail.innerHTML = '';
+                        render.card.dom(keys).detail.style.display = 'none';
                     }
                 });
                 // 編輯
@@ -109,7 +111,7 @@ const autoUpdateData = async () => {
                             render.card.dom(keys).imgSrc.innerHTML = '';
                         }
                         // 內文
-                        render.card.dom(keys).detail.innerHTML = detail;
+                        render.card.dom(keys).detail.style.display = '';
                     });
                     // 刪除
                     render.updatePost.dom().deleteID(keys).addEventListener('click', () => {
