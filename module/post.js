@@ -27,7 +27,7 @@ function logout() {
             console.log(error);
         });
 }
-const updatePost = (key, title, content, img, detail, uid) => {
+const updatePost = (key, title, content, img, detail, startTime, uid) => {
     const dataRef = ref(database, 'research/post/' + key);
 
     set(dataRef, {
@@ -36,7 +36,8 @@ const updatePost = (key, title, content, img, detail, uid) => {
         img: img,
         detail: detail,
         permissions: uid,
-        time: dateutils.ToDateTime()
+        startTime: startTime,
+        time: Date.now()
     });
 }
 const post = (uid = null, title, content, img, detail) => {
@@ -49,7 +50,8 @@ const post = (uid = null, title, content, img, detail) => {
         img: img,
         detail: detail,
         permissions: uid,
-        time: dateutils.ToDateTime()
+        startTime: Date.now(),
+        time: Date.now()
     });
 }
 // post('DPcmhV427VQNJ9ojiOTD2aYyuE83',
@@ -66,6 +68,11 @@ const autoUpdateData = async () => {
         if (data === null) return render.cardContainer.dom().innerHTML = render.emptyContent.html();
         let dataKeys = Object.keys(data);
         let dataVals = Object.values(data);
+        if (auth.currentUser === null) {
+            dataVals.sort((a, b) => {
+                return b.time - a.time;
+            });
+        }
         const cardContainer = render.cardContainer.dom();
         for (let i = 0; i < dataKeys.length; i++) {
             const keys = dataKeys[i];
@@ -75,8 +82,9 @@ const autoUpdateData = async () => {
             const img = dataVals[i].img;
             const detail = dataVals[i].detail;
             const time = dataVals[i].time;
+            const startTime = dataVals[i].startTime;
             // 所有人
-            cardContainer.insertAdjacentHTML('beforeend', render.card.html(keys, title, img, content, time));
+            cardContainer.insertAdjacentHTML('beforeend', render.card.html(keys, title, img, content, dateutils.ToDateTime(startTime) + ' ~ ' + dateutils.ToDateTime(time)));
             setTimeout(() => {
                 render.card.dom(keys).detail.style.display = 'none';
                 render.card.dom(keys).detail.innerHTML = detail;
@@ -104,7 +112,7 @@ const autoUpdateData = async () => {
                             render.card.dom(keys).card.setAttribute('contenteditable', false);
 
                             // 更新
-                            updatePost(keys, render.card.dom(keys).title.innerHTML, render.card.dom(keys).content.innerHTML, render.card.dom(keys).imgSrc.innerHTML, render.card.dom(keys).detail.innerHTML, auth.currentUser.uid);
+                            updatePost(keys, render.card.dom(keys).title.innerHTML, render.card.dom(keys).content.innerHTML, render.card.dom(keys).imgSrc.innerHTML, render.card.dom(keys).detail.innerHTML, startTime, auth.currentUser.uid);
 
                             // 圖片連結可視化編輯
                             render.card.dom(keys).img.style.display = '';
@@ -176,7 +184,7 @@ const autoUpdateData = async () => {
             // 自己
             render.addCard.dom().addEventListener('click', () => {
                 if (permissions === auth.currentUser.uid && !render.admin.dom().card(keys).card) {
-                    render.admin.dom().myCard.insertAdjacentHTML('beforeend', render.card.html(keys, title, img, content, time));
+                    render.admin.dom().myCard.insertAdjacentHTML('beforeend', render.card.html(keys, title, img, content, dateutils.ToDateTime(startTime) + ' ~ ' + dateutils.ToDateTime(time)));
                     setTimeout(() => {
                         render.admin.dom().card(keys).card.addEventListener('click', () => {
                             if (render.admin.dom().card(keys).card.getAttribute('contenteditable') === 'true') return;
@@ -203,7 +211,7 @@ const autoUpdateData = async () => {
                                     render.admin.dom().card(keys).card.setAttribute('contenteditable', false);
 
                                     // 更新
-                                    updatePost(keys, render.admin.dom().card(keys).title.innerHTML, render.admin.dom().card(keys).content.innerHTML, render.admin.dom().card(keys).imgSrc.innerHTML, render.admin.dom().card(keys).detail.innerHTML, auth.currentUser.uid);
+                                    updatePost(keys, render.admin.dom().card(keys).title.innerHTML, render.admin.dom().card(keys).content.innerHTML, render.admin.dom().card(keys).imgSrc.innerHTML, render.admin.dom().card(keys).detail.innerHTML, startTime, auth.currentUser.uid);
 
                                     // 圖片連結可視化編輯
                                     render.admin.dom().card(keys).img.style.display = '';
