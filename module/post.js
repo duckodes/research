@@ -88,8 +88,9 @@ const autoUpdateData = async () => {
             setTimeout(() => {
                 render.card.dom(keys).detail.style.display = 'none';
                 render.card.dom(keys).detail.innerHTML = detail;
-                render.card.dom(keys).card.addEventListener('click', () => {
+                render.card.dom(keys).card.addEventListener('click', (e) => {
                     if (render.card.dom(keys).card.getAttribute('contenteditable') === 'true') return;
+                    if (e.target instanceof HTMLVideoElement) return;
                     if (render.card.dom(keys).detail.style.display === 'none') {
                         render.card.dom(keys).detail.style.display = '';
                     } else {

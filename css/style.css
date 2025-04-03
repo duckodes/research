@@ -73,6 +73,8 @@ body {
 
 .card-container>.card>img {
     width: 100%;
+    mask-image: radial-gradient(circle, #000f 10%, #0000 100%);
+    mask-composite: intersect;
 }
 
 .card-container>.card>.content {
@@ -265,7 +267,7 @@ body {
     padding: 5px;
 }
 
-.admin>.my-card>.card>.tool{
+.admin>.my-card>.card>.tool {
     display: flex;
     justify-content: end;
 }
