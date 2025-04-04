@@ -439,6 +439,7 @@ const render = {
     }
 }
 const main = (async () => {
+    motionbackground.initdotliner('#5ff5', '#0000');
     onAuthStateChanged(auth, (user) => {
         console.log(user);
         // 檢查金鑰
