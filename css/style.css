@@ -1,5 +1,5 @@
 body {
-    background-color: #353535;
+    background-color: #151515;
     color: #fff;
     display: flex;
     justify-content: center;
@@ -50,8 +50,9 @@ body {
 }
 
 .card-container>.card {
-    width: 85dvw;
-    max-width: 500px;
+    width: 90dvw;
+    min-width: 150px;
+    max-width: 700px;
     word-wrap: break-word;
     box-shadow: 2px 2px 10px #303030, -2px -2px 10px #303030;
     margin: 5px;
