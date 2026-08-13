@@ -57,7 +57,7 @@ const post = (uid = null, title, content, img, detail) => {
 // post('DPcmhV427VQNJ9ojiOTD2aYyuE83',
 // '插件繪圖工具', 
 // 'unity底層開發的插件工具',
-// 'https://lib.duckode.com/img/research/color_all.png',
+// 'https://lib.noteest.com/img/research/color_all.png',
 // 'ColorPanel插件開發<br>目的: Unity編輯器畫圖。<br>動機: 想畫個小UI物件，打開Photoshop卻很卡，因此就想直接用Unity引擎做出可以畫圖的小工具。');
 const autoUpdateData = async () => {
     document.body.insertAdjacentHTML('beforeend', render.cardContainer.html());
